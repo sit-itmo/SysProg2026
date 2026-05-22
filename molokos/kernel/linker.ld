@@ -6,6 +6,7 @@ SECTIONS
 
     .text : ALIGN(4)
     {
+        *(.text.boot64)
         *(.text.start)
         *(.text*)
     }

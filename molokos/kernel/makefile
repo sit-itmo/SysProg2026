@@ -1,7 +1,8 @@
 BUILD_DIR := build
 
+CC64    ?= gcc -m64
 CC      ?= gcc -m32
-LD      ?= ld -32
+LD      ?= ld
 OBJCOPY ?= objcopy
 NASM    ?= nasm
 QEMU    ?= qemu-system-i386
@@ -32,8 +33,11 @@ $(BUILD_DIR):
 $(BUILD_DIR)/kernel.o: kernel.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -g3 -ggdb3 -c $< -o $@
 
-$(BUILD_DIR)/kernel.elf: $(BUILD_DIR)/kernel.o linker.ld
-	$(LD) -m elf_i386 -T linker.ld -o $@ $(BUILD_DIR)/kernel.o
+$(BUILD_DIR)/boot64.o: boot64.asm | $(BUILD_DIR)
+	$(NASM) -f elf $< -o $@
+
+$(BUILD_DIR)/kernel.elf: $(BUILD_DIR)/kernel.o $(BUILD_DIR)/boot64.o linker.ld
+	$(LD) -m elf_i386 -T linker.ld -o $@ $(BUILD_DIR)/kernel.o $(BUILD_DIR)/boot64.o
 
 $(BUILD_DIR)/kernel.bin: $(BUILD_DIR)/kernel.elf
 	$(OBJCOPY) -O binary $< $@
@@ -53,5 +57,10 @@ $(BUILD_DIR)/os-image.bin: $(BUILD_DIR)/boot.bin $(BUILD_DIR)/kernel.padded.bin
 run: $(BUILD_DIR)/os-image.bin
 	$(QEMU) -drive format=raw,file=$<
 
+rundbg: $(BUILD_DIR)/os-image.bin
+	$(QEMU) -s -S -drive format=raw,file=$<
+
 clean:
 	rm -rf $(BUILD_DIR)/
+
+rebuild: clean all
