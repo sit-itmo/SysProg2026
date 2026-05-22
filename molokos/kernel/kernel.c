@@ -56,8 +56,8 @@ void puts(const char* s) {
 
 void kmain(void) {
     clear_screen();
-    
     puts("Hello from kernel.c!");
+    while(10);
     puts("Now running in 32-bit Protected Mode.");
     puts("Loaded by a tiny MBR bootloader.");
 

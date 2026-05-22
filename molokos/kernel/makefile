@@ -5,7 +5,7 @@ CC      ?= gcc -m32
 LD      ?= ld
 OBJCOPY ?= objcopy
 NASM    ?= nasm
-QEMU    ?= qemu-system-i386
+QEMU    ?= qemu-system-x86_64
 
 CFLAGS := \
 	-std=gnu11 \
@@ -31,7 +31,7 @@ $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
 $(BUILD_DIR)/kernel.o: kernel.c | $(BUILD_DIR)
-	$(CC) $(CFLAGS) -g3 -ggdb3 -c $< -o $@
+	$(CC64) $(CFLAGS) -g3 -ggdb3 -c $< -o $@
 
 $(BUILD_DIR)/boot64.o: boot64.asm | $(BUILD_DIR)
 	$(NASM) -f elf $< -o $@
