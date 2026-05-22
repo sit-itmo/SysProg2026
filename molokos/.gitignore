@@ -1,0 +1,4 @@
+*.bin
+*.o
+hdd.img
+*.dbg
