@@ -1,0 +1,126 @@
+
+#include <stdio.h>
+int main()
+{
+	printf("Hello World");
+	return 0;
+}
+
+//////////
+// ELF Format
+//////////
+// Code + Hello world string
+//////////
+
+edx = size
+ecx = "Hello World"
+ebx = (fd)1
+eax = 4
+int 0x80
+
+
+ebx = 0
+eax = 1
+int 0x80
+
+//////////
+// Code
+//////////
+
+mod reg_opcode, rm
+
+BA 0C 00 00 00  mov edx, 12
+B9 00 00 80 00  mov ecx, 0x800000 ; ??? "Hello World!"
+BB 01 00 00 00  mov ebx, 1
+B8 04 00 00 00  mov eax, 4
+CD 80           int 0x80
+
+31 DB            xor ebx, ebx ; mov ebx, 0
+B8 01 00 00 00   mov eax, 1
+CD 80            int 0x80
+EB FE            1: jmp 1b
+
+
+   call 1f
+1: pop eax
+
+
+48 65 6C 6C 6F 20 57 6F 72 6C 64 21
+Hello World!
+
+//////////
+// ELF Format
+//////////
+7f 45 4c 46 ; ELF
+01 ; 32 bit
+01 ; Little
+01 ; version
+00 00 ; ABI
+00 00 00 00 00 00 00 ; padding
+02 00 ; Exec
+03 00 ; Machine
+01 00 00 00 ; Version
+00 00 80 00 ; entry point ???
+00 00 00 00 ; phdr offset ???
+00 00 00 00 ; section headers ---
+00 00 00 00 ; flags
+34 00 ; size of header
+20 00 ; size of entry
+01 00 ; phdr size
+00 00 ; no sections
+00 00 ; no section
+00 00 ; no sections
+
+01 00 00 00 ; LOAD
+00 00 00 00 ; load all file
+00 00 80 00 ; 0x00800000 vaddr
+00 00 80 00 ; 0x00800000 paddr
+82 00 00 00 ; 256 bytes - file size
+00 01 00 00 ; 256 bytes - memory size
+07 00 00 00 ; RWX
+00 00 00 00 ; align
+
+
+////////////////////////////
+7f 45 4c 46 
+01 
+01 
+01 
+00 00 
+00 00 00 00 00 00 00 
+02 00 
+03 00 
+01 00 00 00 
+54 00 80 00 
+34 00 00 00 
+00 00 00 00 
+00 00 00 00 
+34 00
+20 00
+01 00
+00 00
+00 00
+00 00 
+
+01 00 00 00 
+00 00 00 00 
+00 00 80 00 
+00 00 80 00 
+82 00 00 00 
+00 01 00 00 
+07 00 00 00 
+00 00 00 00 
+
+BA 0C 00 00 00  
+B9 76 00 80 00  
+BB 01 00 00 00  
+B8 04 00 00 00  
+CD 80           
+
+31 DB            
+B8 01 00 00 00   
+CD 80            
+EB FE 
+90
+
+48 65 6C 6C 6F 20 57 6F 72 6C 64 21
