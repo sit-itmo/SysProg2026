@@ -2,3 +2,4 @@
 *.o
 hdd.img
 *.dbg
+kernel/build
